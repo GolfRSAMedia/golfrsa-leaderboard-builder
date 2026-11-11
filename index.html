@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GolfRSA Leaderboard Builder</title>
+<meta name="description" content="Build GolfRSA tournament leaderboard graphics and file each download in the shared bank.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>GolfRSA Leaderboard Builder<small id="subline">Enter each day's scores, then download the graphic. Scores are saved on this computer.</small></h1>
+    <nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Builder</a><a href="bank.html">Download bank</a></nav>
+  </header>
+  <div class="status" id="status" data-s="idle"><span class="dot"></span><span id="statusText">Ready</span></div>
+
+  <div class="grid">
+    <section class="proof stack" aria-label="Leaderboard preview">
+      <div class="frame">
+        <canvas id="board" width="1080" height="1350" aria-label="Leaderboard graphic, 1080 by 1350 pixels"></canvas>
+        <span class="badge" id="exampleBadge" hidden>Example players – add your own below</span>
+      </div>
+      <div class="row">
+        <button class="primary" id="dlPng" type="button">Download PNG (1080×1350)</button>
+        <button id="dlCsv" type="button">Export CSV</button>
+      </div>
+      <div class="bankopts" id="bankOpts">
+        <label class="check"><input type="checkbox" id="toBank" checked> File each download in the <a href="bank.html">download bank</a></label>
+        <label class="f">Your name (shown in the bank)<input type="text" id="createdBy" autocomplete="name" maxlength="60" placeholder="Optional"></label>
+      </div>
+      <p class="meta" id="bankOff" hidden>The download bank isn't connected yet, so downloads only save to this computer. See the README to set it up.</p>
+      <p class="meta" id="dlNote">Export CSV to share scores with a colleague (they paste it in), or to build in Photoshop with the builder script.</p>
+    </section>
+
+    <div class="stack">
+      <section class="panel" aria-labelledby="h-event">
+        <h2 id="h-event">Tournament <span id="roundInfo"></span></h2>
+        <div class="fields">
+          <label class="f wide">Tournament name<input type="text" id="tournament" autocomplete="off" maxlength="120" placeholder="SA Women's Stroke Play Championship"></label>
+          <label class="f wide">Venue<input type="text" id="venue" autocomplete="off" placeholder="Selborne Golf Club"></label>
+          <label class="f wide">Dates<input type="text" id="dates" autocomplete="off" placeholder="31 Oct – 3 Nov 2026"></label>
+          <label class="f">Course par<input type="number" id="par" min="54" max="80" step="1"></label>
+          <label class="f">Total rounds
+            <select id="totalRounds"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+          </label>
+          <label class="f">Players shown<input type="number" id="show" min="3" max="15" step="1"></label>
+          <label class="f">Round title<input type="text" id="roundTitle" placeholder="Automatic" autocomplete="off"></label>
+        </div>
+        <p class="meta">Leave the round title blank and it reads ROUND 1, ROUND 2… then FINAL ROUND once every round has scores.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="h-img">
+        <h2 id="h-img">Photo &amp; logo <span id="imgNote">Saved on this computer only</span></h2>
+        <div class="imgs">
+          <div class="imgcard">
+            <strong>Event logo</strong>
+            <div class="thumb" id="logoThumb"></div>
+            <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" hidden>
+            <button type="button" id="logoBtn">Upload logo</button>
+          </div>
+          <div class="imgcard">
+            <strong>Background photo</strong>
+            <div class="thumb photo" id="photoThumb"></div>
+            <input type="file" id="photoFile" accept="image/png,image/jpeg,image/webp" hidden>
+            <button type="button" id="photoBtn">Upload photo</button>
+          </div>
+        </div>
+        <div class="fields">
+          <label class="f">Photo left / right<input type="range" id="photoX" min="0" max="100" step="1"></label>
+          <label class="f">Photo up / down<input type="range" id="photoY" min="0" max="100" step="1"></label>
+          <label class="f">Photo zoom<input type="range" id="photoZoom" min="100" max="250" step="1"></label>
+        </div>
+        <p class="meta">Keep the player's face in the left third; the card covers the right.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="h-players">
+        <h2 id="h-players">Players <span id="playerCount"></span></h2>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Pos</th><th>Player</th><th>Home club</th><th class="sc">R1</th><th class="sc">R2</th><th class="sc">R3</th><th class="sc">R4</th><th class="sc">Tot</th><th class="sc">Par</th><th><span class="visually-hidden" hidden>Remove</span></th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="empty" id="emptyRow" hidden>No players yet. Add one below, or paste the field from Excel.</div>
+        </div>
+        <div class="row">
+          <button type="button" id="addPlayer">Add player</button>
+          <button type="button" class="danger" id="clearAll">Remove all players</button>
+        </div>
+        <div class="confirm" id="clearConfirm" hidden>
+          <span>Remove all <b id="clearN">0</b> players?</span>
+          <button type="button" class="danger" id="clearYes">Yes, remove</button>
+          <button type="button" id="clearNo">Cancel</button>
+        </div>
+        <details>
+          <summary>Paste players from Excel or a CSV</summary>
+          <div class="stack" style="gap:10px">
+            <textarea id="pasteBox" aria-label="Pasted player data" placeholder="Name, Club, R1, R2, R3, R4 – one player per line. A header row (NAME, CLUB, R1…) is fine, and the Photoshop CSV works too."></textarea>
+            <div class="row">
+              <button type="button" class="primary" id="pasteReplace">Replace players</button>
+              <button type="button" id="pasteAdd">Add to players</button>
+              <span class="meta" id="pasteMsg"></span>
+            </div>
+          </div>
+        </details>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/footer-logo.js"></script>
+<script src="js/bank-client.js"></script>
+<script src="js/builder.js"></script>
+</body>
+</html>

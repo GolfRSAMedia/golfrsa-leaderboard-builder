@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GolfRSA Download Bank</title>
+<meta name="description" content="Every GolfRSA leaderboard graphic downloaded, by tournament and month.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>GolfRSA Download Bank<small>Every leaderboard graphic downloaded from the builder, by tournament and month.</small></h1>
+    <nav class="nav" aria-label="Pages"><a href="index.html">Builder</a><a href="bank.html" aria-current="page">Download bank</a></nav>
+  </header>
+  <div class="status" id="status" data-s="idle"><span class="dot"></span><span id="statusText">Loading downloads…</span></div>
+
+  <section class="panel" id="setup" hidden>
+    <h2>Bank not connected</h2>
+    <p>This site hasn't been linked to its Supabase database yet. Add the project URL and anon key to <code>js/config.js</code>, then run <code>supabase/setup.sql</code> once. The README has the steps.</p>
+  </section>
+
+  <section class="panel" id="overview" hidden>
+    <div class="stats">
+      <div><b id="stTotal">0</b><span>Downloads</span></div>
+      <div><b id="stTourn">0</b><span>Tournaments</span></div>
+      <div><b id="stMonth">0</b><span id="stMonthLbl">This month</span></div>
+    </div>
+    <div class="filters">
+      <label class="f">Tournament<select id="fTourn"><option value="">All tournaments</option></select></label>
+      <label class="f">Month<select id="fMonth"><option value="">All months</option></select></label>
+      <label class="f">Search<input type="text" id="fSearch" placeholder="Venue, leader, name…" autocomplete="off"></label>
+    </div>
+    <div class="row">
+      <button type="button" id="refresh">Refresh</button>
+      <button type="button" id="clearF">Clear filters</button>
+      <span class="meta" id="showing"></span>
+    </div>
+  </section>
+
+  <section class="panel" id="summaryPanel" hidden aria-labelledby="h-sum">
+    <h2 id="h-sum">Downloads per tournament <span>Tap a row to show those graphics</span></h2>
+    <div class="tablewrap">
+      <table class="summary">
+        <thead><tr><th>Tournament</th><th>Rounds filed</th><th style="text-align:right">Downloads</th><th>Latest</th></tr></thead>
+        <tbody id="sumBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="stack" id="gallery"></div>
+  <p class="empty panel" id="none" hidden>No downloads match these filters.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/bank-client.js"></script>
+<script src="js/bank.js"></script>
+</body>
+</html>

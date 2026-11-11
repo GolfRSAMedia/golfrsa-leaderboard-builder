@@ -10,8 +10,8 @@
 //  aren't filed in the bank.
 // ---------------------------------------------------------------
 window.GOLFRSA_CONFIG = {
-  supabaseUrl: "",          // e.g. "https://abcdefghijkl.supabase.co"
-  supabaseAnonKey: "",      // the long "anon public" key
+  supabaseUrl: "https://hwmwphjgvofmuhoslzrd.supabase.co",          // e.g. "https://abcdefghijkl.supabase.co"
+  supabaseAnonKey: "sb_publishable_L3--9CRcIUL_mzCqxy76eQ_NrX4zZ4f",      // the long "anon public" key
   bucket: "leaderboards",   // storage bucket created by setup.sql
   timeZone: "Africa/Johannesburg"
 };
